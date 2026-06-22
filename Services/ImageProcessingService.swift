@@ -8,25 +8,24 @@ final class ImageProcessingService {
     func applyBinarization(to image: UIImage) -> UIImage {
         guard let ciImage = CIImage(image: image) else { return image }
 
-        // Convertir a escala de grises
+        // Escala de grises
         let grayscale = ciImage.applyingFilter("CIColorControls", parameters: [
-            kCIInputSaturationKey: 0.0,
-            kCIInputContrastKey: 1.1
+            kCIInputSaturationKey: 0.0
         ])
 
-        // Binarización: umbral alto para B/N de alto contraste
-        let threshold = CIFilter.colorThreshold()
-        threshold.inputImage = grayscale
-        threshold.threshold = 0.5
+        // Niveles: aclarar sombras suaves, oscurecer fondos sin destruir el texto
+        let levels = grayscale.applyingFilter("CIColorControls", parameters: [
+            kCIInputBrightnessKey: 0.05,
+            kCIInputContrastKey: 1.6
+        ])
 
-        // Invertir: documento (papel) blanco, fondo negro
-        guard let thresholdOutput = threshold.outputImage else { return image }
-        let inverted = thresholdOutput.applyingFilter("CIColorInvert")
+        // Nitidez para que el texto sea más legible
+        let sharp = levels.applyingFilter("CISharpenLuminance", parameters: [
+            kCIInputSharpnessKey: 0.6,
+            kCIInputRadiusKey: 1.5
+        ])
 
-        guard
-            let cgImage = context.createCGImage(inverted, from: inverted.extent)
-        else { return image }
-
+        guard let cgImage = context.createCGImage(sharp, from: sharp.extent) else { return image }
         return UIImage(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
     }
 }
