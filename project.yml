@@ -1,0 +1,27 @@
+name: DocumentScanner
+options:
+  bundleIdPrefix: com.benjaminpalma
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.3"
+
+targets:
+  DocumentScanner:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: .
+        excludes:
+          - "Package.swift"
+          - "project.yml"
+          - "codemagic.yaml"
+          - ".git"
+    info:
+      path: Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.benjaminpalma.documentscanner
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1"
+        ENABLE_PREVIEWS: YES
