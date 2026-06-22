@@ -10,14 +10,19 @@ workflows:
         script: brew install xcodegen
       - name: Generate Xcode project
         script: xcodegen generate
-      - name: Build iOS app
+      - name: Build iOS app for simulator
         script: |
           xcodebuild \
             -project DocumentScanner.xcodeproj \
             -scheme DocumentScanner \
             -sdk iphonesimulator \
             -configuration Debug \
-            build \
-            CODE_SIGNING_ALLOWED=NO
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+      - name: Zip .app for download
+        script: |
+          APP_PATH=$(find build -name "*.app" | head -1)
+          zip -r DocumentScanner.app.zip "$APP_PATH"
     artifacts:
-      - build/Build/Products/**/*.app
+      - DocumentScanner.app.zip
