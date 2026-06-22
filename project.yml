@@ -25,3 +25,5 @@ targets:
         SWIFT_VERSION: "5.9"
         TARGETED_DEVICE_FAMILY: "1"
         ENABLE_PREVIEWS: YES
+        DEVELOPMENT_TEAM: YDT3D73D9T
+        CODE_SIGN_STYLE: Automatic

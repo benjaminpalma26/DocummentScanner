@@ -5,24 +5,32 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       xcode: 16.2
+      ios_signing:
+        distribution_type: development
+        bundle_identifier: com.benjaminpalma.documentscanner
     scripts:
       - name: Install XcodeGen
         script: brew install xcodegen
       - name: Generate Xcode project
         script: xcodegen generate
-      - name: Build iOS app for simulator
+      - name: Set Team ID
+        script: |
+          sed -i '' "s/DEVELOPMENT_TEAM = \"\"/DEVELOPMENT_TEAM = YDT3D73D9T/g" DocumentScanner.xcodeproj/project.pbxproj || true
+      - name: Build iOS app for device
         script: |
           xcodebuild \
             -project DocumentScanner.xcodeproj \
             -scheme DocumentScanner \
-            -sdk iphonesimulator \
+            -sdk iphoneos \
             -configuration Debug \
             -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
+            DEVELOPMENT_TEAM=YDT3D73D9T \
+            CODE_SIGN_STYLE=Automatic \
             build
-      - name: Zip .app for download
+      - name: Export IPA
         script: |
           APP_PATH=$(find build -name "*.app" | head -1)
-          zip -r DocumentScanner.app.zip "$APP_PATH"
+          mkdir -p output
+          xcrun PackageApplication "$APP_PATH" -o "$(pwd)/output/DocumentScanner.ipa"
     artifacts:
-      - DocumentScanner.app.zip
+      - output/DocumentScanner.ipa
