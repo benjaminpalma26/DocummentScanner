@@ -3,7 +3,7 @@ options:
   bundleIdPrefix: com.benjaminpalma
   deploymentTarget:
     iOS: "16.0"
-  xcodeVersion: "15.3"
+  xcodeVersion: "16.2"
 
 targets:
   DocumentScanner:
