@@ -19,6 +19,12 @@ targets:
           - ".git"
     info:
       path: Info.plist
+      properties:
+        NSCameraUsageDescription: "Esta app necesita acceso a la cámara para escanear documentos."
+        UILaunchScreen:
+          UIColorName: ""
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.benjaminpalma.documentscanner
