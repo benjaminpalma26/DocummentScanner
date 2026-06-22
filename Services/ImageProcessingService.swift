@@ -19,9 +19,12 @@ final class ImageProcessingService {
         threshold.inputImage = grayscale
         threshold.threshold = 0.5
 
+        // Invertir: documento (papel) blanco, fondo negro
+        guard let thresholdOutput = threshold.outputImage else { return image }
+        let inverted = thresholdOutput.applyingFilter("CIColorInvert")
+
         guard
-            let output = threshold.outputImage,
-            let cgImage = context.createCGImage(output, from: output.extent)
+            let cgImage = context.createCGImage(inverted, from: inverted.extent)
         else { return image }
 
         return UIImage(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)

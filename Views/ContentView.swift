@@ -12,9 +12,17 @@ struct ContentView: View {
             case .preview(let image):
                 PreviewView(image: image)
 
+            case .pdfPreview(let url):
+                PDFPreviewView(url: url)
+
             case .exporting:
-                ProgressView("Generando PDF…")
-                    .progressViewStyle(.circular)
+                ZStack {
+                    Color.black.ignoresSafeArea()
+                    ProgressView("Generando PDF…")
+                        .progressViewStyle(.circular)
+                        .tint(.white)
+                        .foregroundStyle(.white)
+                }
             }
         }
         .sheet(item: $viewModel.exportURL) { url in
@@ -25,12 +33,46 @@ struct ContentView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+        .confirmationDialog(
+            "¿Descartar todas las páginas escaneadas?",
+            isPresented: $viewModel.showClearConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Descartar todo", role: .destructive) {
+                viewModel.clearAllPages()
+            }
+            Button("Cancelar", role: .cancel) {}
+        }
     }
 
     private var cameraScreen: some View {
         ZStack(alignment: .bottom) {
             CameraView()
                 .ignoresSafeArea()
+
+            // Botón descartar (arriba izquierda)
+            if viewModel.document.pageCount > 0 {
+                VStack {
+                    HStack {
+                        Button(action: { viewModel.showClearConfirm = true }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "trash")
+                                Text("Descartar")
+                            }
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(Color.red.opacity(0.8))
+                            .clipShape(Capsule())
+                        }
+                        Spacer()
+                    }
+                    .padding(.top, 56)
+                    .padding(.horizontal, 20)
+                    Spacer()
+                }
+            }
 
             VStack(spacing: 16) {
                 if viewModel.document.pageCount > 0 {
@@ -43,10 +85,8 @@ struct ContentView: View {
                 }
 
                 HStack(spacing: 32) {
-                    // Botón disparador
                     CaptureButton()
 
-                    // Botón generar PDF (solo si hay páginas)
                     if viewModel.document.pageCount > 0 {
                         Button(action: viewModel.generatePDF) {
                             Label("Generar PDF", systemImage: "doc.fill")
