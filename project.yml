@@ -17,7 +17,6 @@ targets:
           - "project.yml"
           - "codemagic.yaml"
           - ".git"
-    assets: Assets.xcassets
     info:
       path: Info.plist
       properties:
@@ -35,4 +34,3 @@ targets:
         ENABLE_PREVIEWS: YES
         DEVELOPMENT_TEAM: YDT3D73D9T
         CODE_SIGN_STYLE: Automatic
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
